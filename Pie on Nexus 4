@@ -1,0 +1,55 @@
+Setting up Lubuntu 18.04 LTS
+
+vi ~/.bashrc
+  export OUT_DIR_COMMON_BASE=/media/thunder45/android/aosp/output
+  export PATH=~/bin:$PATH
+  alias aosp='cd /media/thunder45/android/aosp'
+
+sudo apt install curl
+curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+chmod a+x ~/bin/repo
+
+sudo apt-get install android-tools-adb
+sudo apt-get install make
+
+sudo apt-get install openjdk-8-jdk
+
+sudo apt-get install python2.7
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 2
+sudo update-alternatives --list python
+sudo update-alternatives --config python
+  There are 2 choices for the alternative python (providing /usr/bin/python).
+  
+    Selection    Path                Priority   Status
+  ------------------------------------------------------------
+    0            /usr/bin/python3     2         auto mode
+  * 1            /usr/bin/python2.7   1         manual mode
+    2            /usr/bin/python3     2         manual mode
+
+  Press <enter> to keep the current choice[*], or type selection number: 
+
+
+git config --global user.name "Thunder45"
+git config --global user.email "thunder45@yahoo.com"
+
+repo init -u https://android.googlesource.com/mirror/manifest --mirror
+repo sync
+
+cd lollipop
+repo init --depth=1 -u /media/thunder45/android/aosp/mirror/platform/manifest.git -b android-5.1.1_r19
+
+cd pie
+repo init --depth=1 -u /media/thunder45/android/aosp/mirror/platform/manifest.git 
+repo sync -c
+mkdir .repo/local_manifests
+vi .repo/local_manifests/roomservice.xml
+
+chmod +x ../*.sh
+../extract-broadcom-mako.sh 
+../extract-lge-mako.sh 
+../extract-qcom-mako.sh 
+
+. build/envsetup.sh 
+lunch aosp_mako-userdebug
+make -j4
